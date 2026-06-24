@@ -1,3 +1,3 @@
 alias b := build
 build:
-    gcc *.c -o bird -lX11 -lraylib -lpthread -lm -ldl
+    gcc *.c *.h -o bird -lX11 -lraylib -lpthread -lm -ldl

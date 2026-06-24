@@ -6,7 +6,6 @@
 #define COUNT 6
 #define RADIUS 20
 #define SIZE 40
-#define GAP 120
 
 typedef struct {
     int x, y;
@@ -20,14 +19,14 @@ void init() {
 void renderBird(pos pos) { DrawCircle(pos.x, pos.y, RADIUS, GREEN); }
 void renderPipe(pos pos) {
     DrawRectangle(pos.x, pos.y, SIZE, 800 - pos.y, GRAY);
-    DrawRectangle(pos.x, 0, SIZE, pos.y - GAP, LIGHTGRAY);
+    DrawRectangle(pos.x, 0, SIZE, pos.y - 60, LIGHTGRAY);
 }
 
 int main(void) {
-    pos bird = {.x = 300, .y = 225};
+    pos bird = {.x = 400, .y = 225};
     pos column[COUNT];
     for (int i = 0; i < COUNT; ++i)
-        column[i] = (pos){.y = rand() % 350, .x = i * 200};
+        column[i] = (pos){.y = rand() % 450, .x = i * 200};
     int jump_countdown = 0;
     c2Circle circle;
     c2AABB box1;
@@ -37,17 +36,18 @@ int main(void) {
     init();
     while (!WindowShouldClose()) {
         circle = (c2Circle){.p = {bird.x, bird.y}, .r = RADIUS};
-
         for (int i = 0; i < COUNT; ++i) {
-            c2AABB bottom = {.min = {column[i].x, column[i].y},
-                             .max = {column[i].x + SIZE, 800}};
-            c2AABB top = {.min = {column[i].x, 0},
-                          .max = {column[i].x + SIZE, column[i].y - GAP}};
-            if (c2CircletoAABB(circle, bottom) || c2CircletoAABB(circle, top))
+            box1 = (c2AABB){.min = {bird.x, bird.y},
+                            .max = {column[i].x + 40, 800}};
+            box2 = (c2AABB){.min = {bird.x, bird.y},
+                            .max = {column[i].x + 40, column[i].y - 60}};
+            if (c2CircletoAABB(circle, box1) != 0 ||
+                c2CircletoAABB(circle, box2) != 0) {
                 return 0;
+            }
         }
         if (jump_countdown > 0) {
-            bird.y = bird.y - 8;
+            bird.y = bird.y - 7;
             jump_countdown = jump_countdown - 1;
         }
         if (IsKeyPressed(KEY_SPACE))
