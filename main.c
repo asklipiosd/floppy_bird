@@ -34,10 +34,15 @@ int main(void) {
     c2AABB box2;
     int hit1;
     int hit2;
+    int acc = 8;
     init();
     while (!WindowShouldClose()) {
         circle = (c2Circle){.p = {bird.x, bird.y}, .r = RADIUS};
 
+        for (int i = 0; i < COUNT; ++i) {
+            if (column[i].x < 0)
+                column[i].x = column[COUNT - 1].x + 200;
+        }
         for (int i = 0; i < COUNT; ++i) {
             c2AABB bottom = {.min = {column[i].x, column[i].y},
                              .max = {column[i].x + SIZE, 800}};
@@ -46,8 +51,13 @@ int main(void) {
             if (c2CircletoAABB(circle, bottom) || c2CircletoAABB(circle, top))
                 return 0;
         }
+        if (jump_countdown > 0 && jump_countdown < 4) {
+            acc -= 1;
+        }
+        if (jump_countdown == 0)
+            acc = 8;
         if (jump_countdown > 0) {
-            bird.y = bird.y - 8;
+            bird.y = bird.y - acc;
             jump_countdown = jump_countdown - 1;
         }
         if (IsKeyPressed(KEY_SPACE))
